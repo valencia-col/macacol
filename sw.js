@@ -1,3 +1,23 @@
-self.addEventListener('fetch', function(event) {
-  // Este archivo vacío es suficiente para que el celular permita la instalación
+const CACHE_NAME = 'macacol-v1';
+const assets = [
+  './',
+  './index.html',
+  './manifest.json',
+  './chimpance.jpg'
+];
+
+self.addEventListener('install', event => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then(cache => {
+      return cache.addAll(assets);
+    })
+  );
+});
+
+self.addEventListener('fetch', event => {
+  event.respondWith(
+    caches.match(event.request).then(response => {
+      return response || fetch(event.request);
+    })
+  );
 });
